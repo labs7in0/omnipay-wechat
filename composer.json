@@ -1,0 +1,31 @@
+{
+    "name": "labs7in0/omnipay-wechat",
+    "type": "library",
+    "description": "WeChat driver for the Omnipay PHP payment processing library",
+    "keywords": [
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment",
+        "purchase",
+        "wechat"
+    ],
+    "homepage": "https://github.com/labs7in0/omnipay-wechat",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "7IN0SAN9",
+            "email": "me@7in0.me"
+        }
+    ],
+    "autoload": {
+        "psr-0": {"Omnipay\\WeChat\\": "src/"}
+    },
+    "require": {
+        "omnipay/common": "~2.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    }
+}
