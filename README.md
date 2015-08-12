@@ -3,7 +3,9 @@ Omnipay-Wechat
 
 **Wechat Payment driver for the Omnipay PHP payment processing library**
 
-[![Build Status](https://travis-ci.org/labs7in0/omnipay-wechat.svg)](https://travis-ci.org/labs7in0/omnipay-wechat)
+[![Build Status](https://img.shields.io/travis/labs7in0/omnipay-wechat.svg)](https://travis-ci.org/labs7in0/omnipay-wechat)
+[![Packagist Status](https://img.shields.io/packagist/v/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
 
 ## Installation
 
