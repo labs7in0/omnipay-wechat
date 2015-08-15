@@ -2,11 +2,11 @@
 
 namespace Omnipay\WeChat\Message;
 
+use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\CompletePurchaseResponseInterface;
 
-class WechatCompletePurchaseResponse extends BaseAbstractResponse implements CompletePurchaseResponseInterface
+class WechatCompletePurchaseResponse extends AbstractResponse implements CompletePurchaseResponseInterface
 {
-
     public function isSuccessful()
     {
         return $this->data['status'];
@@ -26,5 +26,4 @@ class WechatCompletePurchaseResponse extends BaseAbstractResponse implements Com
     {
         return $this->data['return_msg'];
     }
-
 }

@@ -1,11 +1,11 @@
 <?php namespace Omnipay\WeChat\Message;
 
+use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class WechatPurchaseResponse extends BaseAbstractResponse implements RedirectResponseInterface
+class WechatPurchaseResponse extends AbstractResponse implements RedirectResponseInterface
 {
-
     protected $endpoint = 'weixin://wxpay/bizpayurl';
 
     protected $return_url = false;
@@ -64,7 +64,7 @@ class WechatPurchaseResponse extends BaseAbstractResponse implements RedirectRes
             $bizParameters[strtolower($k)] = $v;
         }
         $bizString = static::httpBuildQuery($bizParameters, false);
-        $bizString .= '&key='. $key;
+        $bizString .= '&key=' . $key;
         return strtoupper(md5($bizString));
     }
 

@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WechatPurchaseRequest extends BaseAbstractRequest
 {
-
     protected function getParameter($key)
     {
         return $this->parameters->get($key);

@@ -4,7 +4,6 @@ namespace Omnipay\WeChat\Message;
 
 class WechatCompletePurchaseRequest extends BaseAbstractRequest
 {
-
     public function getBody()
     {
         return $this->getParameter('body', array());
@@ -35,11 +34,10 @@ class WechatCompletePurchaseRequest extends BaseAbstractRequest
     {
         unset($data['sign']);
         $sign = $this->genSign($data);
-        if ($data['sign'] == $sign)
-        {
-            return TRUE;
+        if ($data['sign'] == $sign) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -50,7 +48,7 @@ class WechatCompletePurchaseRequest extends BaseAbstractRequest
         if ($status == false) {
             $data = array(
                 'return_code' => 'FAIL',
-                'return_msg'  => 'Signature invalid',
+                'return_msg' => 'Signature invalid',
             );
         } else {
             $data = array('return_code' => 'SUCCESS');

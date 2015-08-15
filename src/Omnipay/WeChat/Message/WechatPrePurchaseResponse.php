@@ -2,9 +2,10 @@
 
 namespace Omnipay\WeChat\Message;
 
-class WechatPrePurchaseResponse extends BaseAbstractResponse
-{
+use Omnipay\Common\Message\AbstractResponse;
 
+class WechatPrePurchaseResponse extends AbstractResponse
+{
     public function isRedirect()
     {
         return false;

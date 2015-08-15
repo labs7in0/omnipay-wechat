@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WechatPrePurchaseRequest extends BaseAbstractRequest
 {
-
     protected $endpoint = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 
     protected function getParameter($key)
@@ -82,5 +81,4 @@ class WechatPrePurchaseRequest extends BaseAbstractRequest
 
         return $this->xmlToArray($this->postStr($this->endpoint, $data));
     }
-
 }

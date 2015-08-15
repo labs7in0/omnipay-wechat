@@ -6,12 +6,6 @@ use Omnipay\Common\AbstractGateway;
 
 class ExpressGateway extends AbstractGateway
 {
-
-    const delivery_entry = 'https://api.weixin.qq.com/pay/delivernotify';
-
-    const DELIVERY_SUCCESS = 1;
-    const DELIVERY_FAIL = 0;
-
     public function getName()
     {
         return 'Wechat_Express';
@@ -202,18 +196,17 @@ class ExpressGateway extends AbstractGateway
         return $data['openid'];
     }
 
-    private function array_only($array, $keys)
+    private function arrayOnly($array, $keys)
     {
-        return array_intersect_key($array, array_flip((array)$keys));
+        return array_intersect_key($array, array_flip((array) $keys));
     }
 
-    private function array_key_map($array, $keymap)
+    private function arrayKeyMap($array, $keymap)
     {
         $keys = array_keys($keymap);
-        $arr = $this->array_only($array, $keys);
-        $array = array_diff_key($array, array_flip((array)$keys));
-        foreach ($arr as $k => $v)
-        {
+        $arr = $this->arrayOnly($array, $keys);
+        $array = array_diff_key($array, array_flip((array) $keys));
+        foreach ($arr as $k => $v) {
             $array[$keymap[$k]] = $v;
         }
         return $array;
@@ -234,16 +227,16 @@ class ExpressGateway extends AbstractGateway
         }
 
         $parameters['package'] = 'prepay_id=' . $parameters['prepay_id'];
-        $parameters = $this->array_key_map($parameters, ['out_trade_no' => 'productid']);
-        $params = $this->array_only($parameters, ['appid', 'timestamp', 'noncestr', 'productid', 'package', 'open_id']);
+        $parameters = $this->arrayKeyMap($parameters, ['out_trade_no' => 'productid']);
+        $params = $this->arrayOnly($parameters, ['appid', 'timestamp', 'noncestr', 'productid', 'package', 'open_id']);
         return $this->createRequest('\Omnipay\WeChat\Message\WechatPurchaseRequest', $params);
     }
 
     public function prePurchase(array $parameters = array())
     {
-        $parameters = $this->array_key_map($parameters, ['subject' => 'body']);
+        $parameters = $this->arrayKeyMap($parameters, ['subject' => 'body']);
 
-        $params = $this->array_only($parameters, ['out_trade_no', 'total_fee', 'body', 'open_id']);
+        $params = $this->arrayOnly($parameters, ['out_trade_no', 'total_fee', 'body', 'open_id']);
         $params['total_fee'] = round($params['total_fee']);
         $params['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
         $params['trade_type'] = 'JSAPI';

@@ -166,7 +166,7 @@ abstract class BaseAbstractRequest extends AbstractRequest
             $bizParameters[strtolower($k)] = $v;
         }
         $bizString = static::httpBuildQuery($bizParameters, false);
-        $bizString .= '&key='. $this->getAppKey();
+        $bizString .= '&key=' . $this->getAppKey();
         return strtoupper(md5($bizString));
     }
 }
