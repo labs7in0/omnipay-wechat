@@ -3,13 +3,17 @@
 namespace Omnipay\WeChat\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
-use Omnipay\Common\Message\CompletePurchaseResponseInterface;
 
-class WechatCompletePurchaseResponse extends AbstractResponse implements CompletePurchaseResponseInterface
+class WechatCompletePurchaseResponse extends AbstractResponse
 {
     public function isSuccessful()
     {
-        return $this->data['status'];
+        $result = $this->getData();
+        if ($result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function isRedirect()
@@ -19,11 +23,13 @@ class WechatCompletePurchaseResponse extends AbstractResponse implements Complet
 
     public function isTradeStatusOk()
     {
-        return $this->data['trade_status_ok'];
+        $result = $this->getData();
+        return  $result['trade_state'] == 'SUCCESS';
     }
 
     public function getMessage()
     {
-        return $this->data['return_msg'];
+        $result = $this->getData();
+        return $result['return_msg'];
     }
 }

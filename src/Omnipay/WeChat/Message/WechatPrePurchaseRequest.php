@@ -8,11 +8,6 @@ class WechatPrePurchaseRequest extends BaseAbstractRequest
 {
     protected $endpoint = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 
-    protected function getParameter($key)
-    {
-        return $this->parameters->get($key);
-    }
-
     public function initialize(array $parameters = array())
     {
         if (null !== $this->response) {
@@ -30,33 +25,27 @@ class WechatPrePurchaseRequest extends BaseAbstractRequest
     {
         $this->validate(
             'app_id',
-            'app_key',
-            'partner',
+            'mch_id',
             'body',
             'out_trade_no',
             'total_fee',
             'spbill_create_ip',
             'notify_url',
-            'open_id',
-            'cert_path',
-            'cert_key_path'
+            'trade_type'
         );
 
-        $params = $this->arrayOnly($this->parameters->all(), array(
-            'app_id', 'app_key', 'partner',
-            'body', 'out_trade_no', 'total_fee',
-            'spbill_create_ip', 'notify_url', 'trade_type',
-            'open_id', 'product_id',
-            'device_info', 'attach',
-            'time_start', 'time_expire', 'goods_tag', 'cert_path', 'cert_key_path',
-        ));
-        $params['appid'] = $params['app_id'];
-        $params['openid'] = $params['open_id'];
-        $params['mch_id'] = $params['partner'];
-        $params['nonstr'] = bin2hex(openssl_random_pseudo_bytes(8));
+        $params['appid'] = $this->parameters->get('app_id');
+        $params['mch_id'] = $this->parameters->get('mch_id');
+        $params['nonce_str'] = bin2hex(openssl_random_pseudo_bytes(8));
+        $params['body'] = $this->parameters->get('body');
+        $params['out_trade_no'] = $this->parameters->get('out_trade_no');
+        $params['total_fee'] = $this->parameters->get('total_fee');
+        $params['spbill_create_ip'] = $this->parameters->get('spbill_create_ip');
         $params['time_start'] = date('YmdHis');
-        $params['trade_type'] = $this->arrayGet($params, 'trade_type', 'JSAPI');
-        return $this->arrayExcept($params, ['app_id', 'open_id', 'partner']);
+        $params['notify_url'] = $this->parameters->get('notify_url');
+        $params['trade_type'] = $this->parameters->get('trade_type');
+        $params['product_id'] = $this->parameters->get('out_trade_no');
+        return $params;
     }
 
     public function sendData($data)
@@ -65,14 +54,15 @@ class WechatPrePurchaseRequest extends BaseAbstractRequest
             'appid' => $data['appid'],
             'mch_id' => $data['mch_id'],
             'device_info' => 'WEB',
-            'nonce_str' => bin2hex(openssl_random_pseudo_bytes(8)),
-            'openid' => $data['openid'],
+            'nonce_str' => $data['nonce_str'],
             'body' => $data['body'],
             'out_trade_no' => $data['out_trade_no'],
             'total_fee' => $data['total_fee'],
-            'spbill_create_ip' => $_SERVER['REMOTE_ADDR'],
+            'spbill_create_ip' => $data['spbill_create_ip'],
+            'time_start' => $data['time_start'],
             'notify_url' => $data['notify_url'],
             'trade_type' => $data['trade_type'],
+            'product_id' => $data['product_id'],
         );
 
         $data['sign'] = $this->genSign($data);

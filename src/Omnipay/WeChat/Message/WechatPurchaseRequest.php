@@ -6,11 +6,6 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class WechatPurchaseRequest extends BaseAbstractRequest
 {
-    protected function getParameter($key)
-    {
-        return $this->parameters->get($key);
-    }
-
     public function initialize(array $parameters = array())
     {
         if (null !== $this->response) {
@@ -26,36 +21,15 @@ class WechatPurchaseRequest extends BaseAbstractRequest
 
     public function getData()
     {
-        $this->validate(
-            'app_id',
-            'productid',
-            'app_key'
-        );
+        $this->validate('code_url');
 
-        $params = $this->parameters->all();
-        $params['appid'] = $params['app_id'];
-        $params['appkey'] = $params['app_key'];
-        $params['mch_id'] = $params['partner'];
-        $params = $this->arrayOnly($params, array(
-            'appid', 'productid', 'appkey',
-            'noncestr', 'timestamp', 'package', 'mch_id',
-        ));
+        $params['code_url'] = $this->parameters->get('code_url');
 
         return $params;
     }
 
     public function sendData($data)
     {
-        $this->response = new WechatPurchaseResponse($this, $data);
-        if ($this->parameters->has('return_url')) {
-            $this->response->setReturnUrl($this->parameters->get('return_url'));
-        }
-        if ($this->parameters->has('return_url')) {
-            $this->response->setCancelUrl($this->parameters->get('cancel_url'));
-        }
-        if ($this->parameters->has('fail_url')) {
-            $this->response->setFailUrl($this->parameters->get('fail_url'));
-        }
-        return $this->response;
+        return new WechatPurchaseResponse($this, $data);
     }
 }

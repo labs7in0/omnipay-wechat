@@ -29,16 +29,67 @@ And run composer to update your dependencies:
 
 The following gateways are provided by this package:
 
-* WeChat Express (WeChat JSAPI)
+* WeChat Express (WeChat NATIVE)
 
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
 repository.
 
-WeChat JSAPI require OAuth openid to submit a new order, use `$WeChat_Express->getAuthCode($callback)` to get an url for WeChat OAuth and `$WeChat_Express-->getOpenid($code)` in callback page to get openid.
+## Example
 
-p.s. the url for WeChat OAuth must be opened in WeChat In-App broswer, you can use `strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false` to check if the page were not opened in it, and generate a QR code for user.
+### Make a payment
 
-All methods for WeChat OAuth will be removed in next stable version and I'll publish a WeChat MP library package for composer.
+The WeChat NATIVE payment gateway return a URI which can be opened within WeChat In-App broswer, you can generate a QR code with the URI.
+
+```php
+$omnipay = Omnipay::create('Wechat_Express');
+
+$omnipay->setAppId('app_id'); // App ID of your WeChat MP account
+$omnipay->setAppKey('app_key'); // App Key of your WeChat MP account
+$omnipay->setMchId('partner_id'); // Partner ID of your WeChat merchandiser (WeChat Pay) account
+
+$params = array(
+    'out_trade_no' => time() . rand(100, 999), // billing id in your system
+    'notify_url' => $notify_url, // URL for asynchronous notify
+    'body' => $billing_desc, // A simple description
+    'total_fee' => 0.01, // Amount with less than 2 decimals places
+    'fee_type' => 'CNY', // Currency name from ISO4217, Optional, default as CNY
+);
+
+$response = $omnipay->purchase($params)->send();
+
+$qrCode = new Endroid\QrCode\QrCode(); // Use Endroid\QrCode to generate the QR code
+$qrCode
+    ->setText($response->getRedirectUrl())
+    ->setSize(120)
+    ->setPadding(0)
+    ->render();
+```
+
+### Verify a payment (especially for asynchronous notify)
+
+`completePurchase` for Omnipay-WeChat does not require the same arguments as when you made the initial `purchase` call. The only required parameter is `out_trade_no` (the billing id in your system) or `transaction_id` (the trade number from WeChat).
+
+```php
+$omnipay = Omnipay::create('Wechat_Express');
+
+$omnipay->setAppId('app_id'); // App ID of your WeChat MP account
+$omnipay->setAppKey('app_key'); // App Key of your WeChat MP account
+$omnipay->setMchId('partner_id'); // Partner ID of your WeChat merchandiser (WeChat Pay) account
+
+$params = array(
+    'out_trade_no' => $billing_id, // billing id in your system
+    //or you can use 'transaction_id', the trade number from WeChat
+);
+
+$response = $omnipay->completePurchase($params)->send();
+
+if ($response->isSuccessful() && $response->isTradeStatusOk()) {
+    $responseData = $response->getData();
+
+    // Do something here
+}
+
+```
 
 ## Donate us
 

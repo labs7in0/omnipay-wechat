@@ -4,74 +4,59 @@ namespace Omnipay\WeChat\Message;
 
 class WechatCompletePurchaseRequest extends BaseAbstractRequest
 {
-    public function getBody()
+    protected $endpoint = 'https://api.mch.weixin.qq.com/pay/orderquery';
+
+    public function getTransactionId()
     {
-        return $this->getParameter('body', array());
+        $this->getParameter('transaction_id');
     }
 
-    public function setBody($body)
+    public function setTransactionId($value)
     {
-        $this->setParameter('body', $body);
+        $this->setParameter('transaction_id', $value);
     }
 
-    public function getRequestParams()
+    public function getOutTradeNo()
     {
-        $this->getParameter('request_params', array());
+        $this->getParameter('out_trade_no');
     }
 
-    public function setRequestParams($rp)
+    public function setOutTradeNo($value)
     {
-        $this->setParameter('request_params', $rp);
+        $this->setParameter('out_trade_no', $value);
     }
 
     public function getData()
     {
-        $this->validate('body');
-        return $this->getParameters();
-    }
+        $this->validate(
+            'app_id',
+            'mch_id'
+        );
 
-    private function checkSign($data)
-    {
-        unset($data['sign']);
-        $sign = $this->genSign($data);
-        if ($data['sign'] == $sign) {
-            return true;
-        } else {
-            return false;
-        }
+        $params['appid'] = $this->parameters->get('app_id');
+        $params['mch_id'] = $this->parameters->get('mch_id');
+        $params['nonce_str'] = bin2hex(openssl_random_pseudo_bytes(8));
+        $params['transaction_id'] = $this->parameters->get('transaction_id');
+        $params['out_trade_no'] = $this->parameters->get('out_trade_no');
+        return $params;
     }
 
     public function sendData($data)
     {
-        $body = $data['body'];
-        $status = $this->checkSign($body);
-        if ($status == false) {
-            $data = array(
-                'return_code' => 'FAIL',
-                'return_msg' => 'Signature invalid',
-            );
-        } else {
-            $data = array('return_code' => 'SUCCESS');
-        }
+        $data = array(
+            'appid' => $data['appid'],
+            'mch_id' => $data['mch_id'],
+            'nonce_str' => $data['nonce_str'],
+            'transaction_id' => $data['transaction_id'],
+            'out_trade_no' => $data['out_trade_no'],
+        );
 
-        $res_data['status'] = $status;
-        $res_data['return_msg'] = $this->arrayToXml($data);
-        $res_data['trade_status_ok'] = $status;
+        $data['sign'] = $this->genSign($data);
 
-        return $this->response = new WechatCompletePurchaseResponse($this, $res_data);
-    }
+        $data = $this->arrayToXml($data);
 
-    protected function verifyBody($body, $signature)
-    {
-        return $body && $signature && $signature == $this->genSign($body);
-    }
+        $data = $this->xmlToArray($this->postStr($this->endpoint, $data));
 
-    protected function verifyParam($params)
-    {
-        $signStr = static::httpBuildQueryWithoutNull($params);
-        $stringSignTemp = $signStr . '&key=' . $this->getPartnerKey();
-        $signValue = strtoupper(md5($stringSignTemp));
-
-        return !empty($params['sign']) && $signValue == $params['sign'];
+        return new WechatCompletePurchaseResponse($this, $data);
     }
 }

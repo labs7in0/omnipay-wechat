@@ -16,9 +16,9 @@ abstract class BaseAbstractRequest extends AbstractRequest
         return $this->getParameter('app_id');
     }
 
-    public function setAppKey($key)
+    public function setAppKey($appKey)
     {
-        $this->setParameter('app_key', $key);
+        $this->setParameter('app_key', $appKey);
     }
 
     public function getAppKey()
@@ -26,24 +26,35 @@ abstract class BaseAbstractRequest extends AbstractRequest
         return $this->getParameter('app_key');
     }
 
-    public function setPartner($id)
+    public function setMchId($mchId)
     {
-        $this->setParameter('partner', $id);
+        $this->setParameter('mch_id', $mchId);
     }
 
-    public function getPartner()
+    public function getMchId()
     {
-        return $this->getParameter('partner');
+        return $this->getParameter('mch_id');
     }
 
-    public function setPartnerKey($key)
+    protected function postStr($url, $data)
     {
-        $this->setParameter('partner_key', $key);
-    }
+        $ch = curl_init();
 
-    public function getPartnerKey()
-    {
-        return $this->getParameter('partner_key');
+        $options = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_URL => $url,
+        );
+        curl_setopt_array($ch, $options);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
     }
 
     protected function arrayToXml($arr)
@@ -68,76 +79,10 @@ abstract class BaseAbstractRequest extends AbstractRequest
         return $array_data;
     }
 
-    protected function arrayExcept($array, $keys)
-    {
-        return array_diff_key($array, array_flip((array) $keys));
-    }
-
-    protected function arrayOnly($array, $keys)
-    {
-        return array_intersect_key($array, array_flip((array) $keys));
-    }
-
-    protected function arrayKeyMap($array, $keymap)
-    {
-        $keys = array_keys($keymap);
-        $arr = $this->arrayOnly($array, $keys);
-        $array = $this->arrayExcept($array);
-        foreach ($arr as $k => $v) {
-            $array[$keymap[$k]] = $v;
-        }
-        return $array;
-    }
-
-    protected function arrayGet($array, $key, $default = null)
-    {
-        if (is_null($key)) {
-            return $array;
-        }
-
-        if (isset($array[$key])) {
-            return $array[$key];
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (!is_array($array) || !array_key_exists($segment, $array)) {
-                return value($default);
-            }
-
-            $array = $array[$segment];
-        }
-
-        return $array;
-    }
-
-    protected function postStr($url, $string)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $string);
-
-        $data = curl_exec($ch);
-
-        if ($data) {
-            curl_close($ch);
-            return $data;
-        } else {
-            $error = curl_errno($ch);
-            curl_close($ch);
-            return false;
-        }
-    }
-
     protected static function httpBuildQueryWithoutNull($params)
     {
         foreach ($params as $key => $value) {
-            if (null == $value || 'null' == $value || 'sign' != $key) {
+            if (null == $value || 'null' == $value || 'sign' == $key) {
                 unset($params[$key]);
             }
         }
@@ -147,26 +92,24 @@ abstract class BaseAbstractRequest extends AbstractRequest
         return http_build_query($params);
     }
 
-    protected static function httpBuildQuery($params, $urlencode = true)
+    protected static function httpBuildQuery($params)
     {
         ksort($params);
 
         $str = http_build_query($params);
-
-        if ($urlencode == false) {
-            $str = urldecode($str);
-        }
 
         return $str;
     }
 
     protected function genSign($params)
     {
+        $bizParameters = array();
         foreach ($params as $k => $v) {
             $bizParameters[strtolower($k)] = $v;
         }
-        $bizString = static::httpBuildQuery($bizParameters, false);
+        $bizString = self::httpBuildQueryWithoutNull($bizParameters);
         $bizString .= '&key=' . $this->getAppKey();
-        return strtoupper(md5($bizString));
+
+        return strtoupper(md5(urldecode($bizString)));
     }
 }
