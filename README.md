@@ -42,7 +42,7 @@ repository.
 The WeChat NATIVE payment gateway return a URI which can be opened within WeChat In-App broswer, you can generate a QR code with the URI.
 
 ```php
-$omnipay = Omnipay::create('Wechat_Express');
+$omnipay = Omnipay::create('WeChat_Express');
 
 $omnipay->setAppId('app_id'); // App ID of your WeChat MP account
 $omnipay->setAppKey('app_key'); // App Key of your WeChat MP account
@@ -71,7 +71,7 @@ $qrCode
 `completePurchase` for Omnipay-WeChat does not require the same arguments as when you made the initial `purchase` call. The only required parameter is `out_trade_no` (the billing id in your system) or `transaction_id` (the trade number from WeChat).
 
 ```php
-$omnipay = Omnipay::create('Wechat_Express');
+$omnipay = Omnipay::create('WeChat_Express');
 
 $omnipay->setAppId('app_id'); // App ID of your WeChat MP account
 $omnipay->setAppKey('app_key'); // App Key of your WeChat MP account
