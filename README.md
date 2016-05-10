@@ -3,10 +3,13 @@ Omnipay-WeChat
 
 **WeChat Payment driver for the Omnipay PHP payment processing library**
 
+[![Build Status](https://img.shields.io/badge/project-deprecated-red.svg)](https://github.com/labs7in0/omnipay-wechat)
 [![Build Status](https://img.shields.io/travis/labs7in0/omnipay-wechat.svg)](https://travis-ci.org/labs7in0/omnipay-wechat)
 [![Coverage Status](https://img.shields.io/codecov/c/github/labs7in0/omnipay-wechat.svg)](https://codecov.io/github/labs7in0/omnipay-wechat)
 [![Packagist Status](https://img.shields.io/packagist/v/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
+
+Deprecated. We suggest you to use [@lokielse](https://github.com/lokielse)'s implementation of WeChatPay for Omnipay at [lokielse/omnipay-wechatpay](https://github.com/lokielse/omnipay-wechatpay).
 
 ## Installation
 
