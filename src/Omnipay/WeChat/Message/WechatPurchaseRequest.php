@@ -21,9 +21,10 @@ class WechatPurchaseRequest extends BaseAbstractRequest
 
     public function getData()
     {
-        $this->validate('code_url');
+        $this->validate('code_url', 'timestamp');
 
         $params['code_url'] = $this->parameters->get('code_url');
+        $params['timestamp'] = $this->parameters->get('timestamp');
 
         if (empty($params['code_url'])) {
             throw new \RuntimeException('The code_url that pre-purchase responded is empty, check your parameters!');
