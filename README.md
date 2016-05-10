@@ -9,7 +9,9 @@ Omnipay-WeChat
 [![Packagist Status](https://img.shields.io/packagist/v/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/labs7in0/omnipay-wechat.svg)](https://packagist.org/packages/labs7in0/omnipay-wechat)
 
-Deprecated. We suggest you to use [@lokielse](https://github.com/lokielse)'s implementation of WeChatPay for Omnipay at [lokielse/omnipay-wechatpay](https://github.com/lokielse/omnipay-wechatpay).
+**Deprecated** We suggest you to use [@lokielse](https://github.com/lokielse)'s implementation of WeChatPay for Omnipay at [lokielse/omnipay-wechatpay](https://github.com/lokielse/omnipay-wechatpay).
+
+There's a pre-built Payment Gateway based on Omnipay at [labs7in0/E-cash](https://github.com/labs7in0/E-cash).
 
 ## Installation
 
